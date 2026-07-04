@@ -1,0 +1,555 @@
+:root {
+  --bg: #140a24;
+  --bg-2: #1e1038;
+  --card: #271650;
+  --card-2: #2f1b60;
+  --accent: #b892ff;
+  --accent-strong: #8a5cf6;
+  --danger: #ff6b8a;
+  --good: #4ade80;
+  --text: #f3eefe;
+  --muted: #a596c8;
+  --radius: 16px;
+  --tap: 48px;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: radial-gradient(circle at 30% 0%, var(--bg-2), var(--bg));
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- generic layout ---------- */
+.screen {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 20px 16px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+h2 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.subtle {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 4px 0;
+}
+.hint {
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* ---------- buttons ---------- */
+.btn {
+  min-height: var(--tap);
+  border: none;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--card-2);
+  cursor: pointer;
+  padding: 12px 18px;
+  transition: transform 0.05s ease, opacity 0.15s ease;
+}
+.btn:active {
+  transform: scale(0.98);
+}
+.btn.primary {
+  background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+  color: #1a0d33;
+}
+.btn.danger {
+  background: linear-gradient(135deg, #e14b6a, var(--danger));
+  color: #2a0512;
+}
+.btn.ghost {
+  background: transparent;
+  border: 1px solid var(--card-2);
+  color: var(--muted);
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---------- inputs ---------- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.field span {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+input {
+  min-height: var(--tap);
+  border-radius: 12px;
+  border: 1px solid var(--card-2);
+  background: var(--bg-2);
+  color: var(--text);
+  font-size: 1.1rem;
+  padding: 10px 14px;
+  outline: none;
+  width: 100%;
+}
+input:focus {
+  border-color: var(--accent);
+}
+.code-input {
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+/* ---------- landing ---------- */
+.landing {
+  justify-content: center;
+  text-align: center;
+}
+.brand h1 {
+  font-size: 2.6rem;
+  background: linear-gradient(135deg, var(--accent), #ff9ecb);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.tagline {
+  color: var(--muted);
+  margin-top: -4px;
+}
+.how-to {
+  margin-top: 8px;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  text-align: left;
+}
+.how-to summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.how-to ol {
+  margin: 10px 0 0;
+  padding-left: 20px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ---------- lobby ---------- */
+.lobby-header {
+  text-align: center;
+}
+.room-code {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: var(--card);
+  border: none;
+  border-radius: var(--radius);
+  padding: 12px 28px;
+  cursor: pointer;
+  color: var(--text);
+}
+.room-code .label {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.room-code .code {
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  padding-left: 0.3em;
+}
+.copy-hint {
+  font-size: 0.7rem;
+  color: var(--accent);
+}
+.count {
+  color: var(--accent);
+}
+
+.player-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.player-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--card);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.player-chip .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--good);
+  flex-shrink: 0;
+}
+.player-chip.disconnected {
+  opacity: 0.55;
+}
+.player-chip.disconnected .dot {
+  background: var(--muted);
+}
+.player-chip.active-turn {
+  outline: 2px solid var(--accent);
+}
+.player-chip .name {
+  flex: 1;
+  font-weight: 600;
+}
+.badge {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: var(--accent-strong);
+  color: #1a0d33;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+.badge.muted {
+  background: var(--card-2);
+  color: var(--muted);
+}
+
+.genre-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.genre-card {
+  min-height: 90px;
+  border: 1px solid var(--card-2);
+  background: var(--card);
+  border-radius: 14px;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 10px;
+}
+.genre-card .emoji {
+  font-size: 1.8rem;
+}
+.genre-card .genre-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+.genre-card.selected {
+  border-color: var(--accent);
+  background: var(--card-2);
+  box-shadow: 0 0 0 2px var(--accent) inset;
+}
+.genre-card:disabled {
+  cursor: default;
+}
+
+.sticky-action {
+  position: sticky;
+  bottom: 12px;
+  margin-top: auto;
+}
+
+/* ---------- clue screen ---------- */
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.round-pill,
+.genre-pill {
+  background: var(--card);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.genre-pill {
+  color: var(--accent);
+}
+
+.word-card {
+  background: linear-gradient(135deg, var(--card-2), var(--card));
+  border-radius: var(--radius);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+.word-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+.word-value {
+  font-size: 2.2rem;
+  font-weight: 800;
+}
+.word-note {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.turn-indicator {
+  text-align: center;
+  padding: 10px;
+  background: var(--card);
+  border-radius: 12px;
+}
+
+.clue-feed {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  min-height: 120px;
+}
+.clue-feed .empty {
+  color: var(--muted);
+  text-align: center;
+  margin: auto;
+}
+.clue-round-label {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+.clue-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--card);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  max-width: 85%;
+}
+.clue-bubble.self {
+  margin-left: auto;
+  background: var(--card-2);
+}
+.clue-author {
+  font-size: 0.72rem;
+  color: var(--accent);
+  font-weight: 700;
+}
+.clue-text {
+  font-size: 1.05rem;
+}
+
+.action-bar {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 10px;
+  background: linear-gradient(to top, var(--bg) 70%, transparent);
+}
+.clue-input-row {
+  display: flex;
+  gap: 8px;
+}
+.clue-input-row input {
+  flex: 1;
+}
+
+/* ---------- voting overlay ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 4, 24, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 50;
+  backdrop-filter: blur(4px);
+}
+.overlay-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 24px;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+.vote-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 18px 0;
+}
+.vote-option {
+  min-height: var(--tap);
+  border-radius: 12px;
+  border: 1px solid var(--card-2);
+  background: var(--bg-2);
+  color: var(--text);
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.vote-option.chosen {
+  border-color: var(--accent);
+  background: var(--card-2);
+}
+.vote-option:disabled {
+  opacity: 0.5;
+}
+.vote-progress {
+  color: var(--accent);
+  font-weight: 700;
+}
+.tally .good {
+  color: var(--good);
+  font-weight: 700;
+}
+.tally .bad {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+/* ---------- results ---------- */
+.result-banner {
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  text-align: center;
+}
+.result-banner.group {
+  background: linear-gradient(135deg, #14532d, #22c55e);
+}
+.result-banner.odd {
+  background: linear-gradient(135deg, #7f1d3a, var(--danger));
+}
+.reveal {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.reveal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.reveal-label {
+  color: var(--muted);
+}
+.reveal-value {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.reveal-row.odd .reveal-value {
+  color: var(--danger);
+}
+.reveal-reason {
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+  margin: 4px 0 0;
+}
+
+/* ---------- misc ---------- */
+.banner {
+  background: var(--accent-strong);
+  color: #1a0d33;
+  text-align: center;
+  padding: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--danger);
+  color: #2a0512;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  max-width: 90vw;
+  text-align: center;
+}
+
+@media (min-width: 600px) {
+  .genre-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
