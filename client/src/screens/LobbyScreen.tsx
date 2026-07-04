@@ -8,13 +8,30 @@ const MIN = 3;
 const MAX = 8;
 
 export function LobbyScreen() {
-  const { state } = useGame();
+  const { state, dispatch } = useGame();
   const isHost = state.players.find((p) => p.playerId === state.playerId)?.isHost;
   const count = state.players.filter((p) => p.connected).length;
   const canStart = isHost && state.genre != null && count >= MIN && count <= MAX;
 
+  // Leave this room and return to the landing menu — e.g. if you created a
+  // room by mistake and actually wanted to join someone else's.
+  const backToMenu = () => {
+    const others = state.players.filter((p) => p.connected).length > 1;
+    if (isHost && others && !confirm('Leave this room? The host role passes to another player.')) {
+      return;
+    }
+    actions.leaveRoom();
+    dispatch({ type: 'RESET' });
+  };
+
   return (
     <div className="screen lobby">
+      <div className="topbar">
+        <button className="btn ghost back-btn" onClick={backToMenu}>
+          ← Menu
+        </button>
+      </div>
+
       <header className="lobby-header">
         {state.roomCode && <RoomCodeBadge code={state.roomCode} />}
         <p className="subtle">Share this code so friends can join.</p>
@@ -66,15 +83,7 @@ export function LobbyScreen() {
           {state.genre ? 'Start Game' : 'Pick a genre first'}
         </button>
       ) : (
-        <button
-          className="btn ghost sticky-action"
-          onClick={() => {
-            actions.leaveRoom();
-            location.reload();
-          }}
-        >
-          Leave
-        </button>
+        <p className="hint sticky-action">Waiting for the host to start the game…</p>
       )}
     </div>
   );
