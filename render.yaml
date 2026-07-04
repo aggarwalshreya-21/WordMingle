@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: wordmingle
+    runtime: node
+    plan: free
+    # --include=dev forces devDependencies (vite, typescript, tsx) to install
+    # even though NODE_ENV=production is set, since the build needs them.
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
