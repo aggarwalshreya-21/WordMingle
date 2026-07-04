@@ -14,6 +14,13 @@ export interface ClueEntry {
   round: number;
 }
 
+export interface ChatMessage {
+  playerId: string;
+  nickname: string;
+  text: string;
+  at: number;
+}
+
 export interface VoteTally {
   accusedPlayerId: string | null;
   accusedNickname: string | null;

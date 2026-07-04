@@ -16,9 +16,20 @@ import {
 const graceTimers = new Map<string, NodeJS.Timeout>();
 // Auto-resolve timers for in-progress votes, keyed by room code.
 const voteTimers = new Map<string, NodeJS.Timeout>();
+// playerIds currently in the voice channel, keyed by room code.
+const voicePeers = new Map<string, Set<string>>();
 
 function graceKey(code: string, playerId: string) {
   return `${code}:${playerId}`;
+}
+
+/** Remove a player from a room's voice channel and notify remaining peers. */
+function voiceLeave(io: Server, code: string, playerId: string) {
+  const peers = voicePeers.get(code);
+  if (!peers || !peers.has(playerId)) return;
+  peers.delete(playerId);
+  if (peers.size === 0) voicePeers.delete(code);
+  io.to(code).emit('voice:left', { playerId });
 }
 
 function clearVoteTimer(code: string) {
@@ -147,6 +158,9 @@ export function registerSocketHandlers(io: Server) {
           io.to(p.socketId).emit('game:wordAssigned', {
             word: words.get(p.playerId),
             genre: room.genre,
+            // Tell the odd player (only) that they're the imposter, so they
+            // know to bluff. Never revealed to anyone else.
+            isOdd: p.playerId === room.oddPlayerId,
           });
         }
       }
@@ -208,6 +222,68 @@ export function registerSocketHandlers(io: Server) {
       if (room.everyoneVoted()) resolveVote(io, room);
     });
 
+    // -------- chat message --------
+    socket.on('chat:send', ({ text }: { text: string }) => {
+      const { room, player } = context(socket);
+      if (!room || !player) return;
+      const clean = sanitizeChat(text);
+      if (!clean) return;
+      const msg = {
+        playerId: player.playerId,
+        nickname: player.nickname,
+        text: clean,
+        at: Date.now(),
+      };
+      room.addChat(msg);
+      io.to(room.code).emit('chat:new', msg);
+    });
+
+    // -------- voice chat (WebRTC signaling relay) --------
+    // The server only relays SDP/ICE between peers; audio flows peer-to-peer.
+    socket.on('voice:join', () => {
+      const { room, player } = context(socket);
+      if (!room || !player) return;
+      // Tell the newcomer which peers are already in voice so they can
+      // initiate offers; tell existing peers a newcomer arrived.
+      const peers = voicePeers.get(room.code) ?? new Set<string>();
+      socket.emit('voice:peers', {
+        peers: [...peers]
+          .map((pid) => {
+            const pl = room.getPlayer(pid);
+            return pl ? { playerId: pid, nickname: pl.nickname } : null;
+          })
+          .filter(Boolean),
+      });
+      peers.add(player.playerId);
+      voicePeers.set(room.code, peers);
+      socket.to(room.code).emit('voice:joined', {
+        playerId: player.playerId,
+        nickname: player.nickname,
+      });
+    });
+
+    socket.on('voice:leave', () => {
+      const { room, player } = context(socket);
+      if (!room || !player) return;
+      voiceLeave(io, room.code, player.playerId);
+    });
+
+    // Relay an SDP offer/answer or ICE candidate to a specific peer.
+    const relay = (event: string) => (payload: { to: string; data: unknown }) => {
+      const { room, player } = context(socket);
+      if (!room || !player || !payload?.to) return;
+      const target = room.getPlayer(payload.to);
+      if (target?.socketId) {
+        io.to(target.socketId).emit(event, {
+          from: player.playerId,
+          data: payload.data,
+        });
+      }
+    };
+    socket.on('rtc:offer', relay('rtc:offer'));
+    socket.on('rtc:answer', relay('rtc:answer'));
+    socket.on('rtc:ice', relay('rtc:ice'));
+
     // -------- play again (host) --------
     socket.on('game:playAgain', () => {
       const { room, player } = context(socket);
@@ -235,6 +311,8 @@ export function registerSocketHandlers(io: Server) {
       if (!room || !player) return;
       player.connected = false;
       player.socketId = null;
+      // Drop them from voice so peers tear down the audio connection.
+      voiceLeave(io, room.code, player.playerId);
       io.to(room.code).emit('player:disconnected', { playerId: player.playerId });
       emitLobbyUpdate(io, room);
 
@@ -302,6 +380,12 @@ function sanitizeClue(clue: unknown): string | null {
   return trimmed.length > 0 ? trimmed : null;
 }
 
+function sanitizeChat(text: unknown): string | null {
+  if (typeof text !== 'string') return null;
+  const trimmed = text.trim().slice(0, 300);
+  return trimmed.length > 0 ? trimmed : null;
+}
+
 /** Re-send the current game state privately to a reconnecting player. */
 function sendStateSnapshot(socket: Socket, room: Room, player: Player) {
   socket.emit('state:snapshot', {
@@ -314,6 +398,8 @@ function sendStateSnapshot(socket: Socket, room: Room, player: Player) {
     voteInProgress: room.voteInProgress,
     // The player's own word only — never anyone else's.
     word: player.word ?? null,
+    isOdd: player.playerId === room.oddPlayerId,
+    chat: room.chat,
     // If the game already ended, include the reveal.
     result:
       room.phase === 'results'

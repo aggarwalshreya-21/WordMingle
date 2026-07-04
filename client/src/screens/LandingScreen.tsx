@@ -24,7 +24,7 @@ export function LandingScreen() {
     <div className="screen landing">
       <div className="brand">
         <h1>WordMingle</h1>
-        <p className="tagline">Spot the odd one out.</p>
+        <p className="tagline">Spot the imposter.</p>
       </div>
 
       {!state.connected && (
@@ -134,12 +134,12 @@ function HowToPlay() {
       <ol>
         <li>Everyone gets a secret word from the chosen genre.</li>
         <li>
-          One player is the <b>odd one</b> — they get a different, related word.
+          One player is the <b>imposter</b> — they get a different, related word.
         </li>
         <li>Each round, give a one-word clue about your word.</li>
-        <li>Call a vote anytime to accuse the odd one.</li>
+        <li>Call a vote anytime to accuse the imposter.</li>
         <li>
-          Catch them and the group wins. Survive 3 rounds and the odd one wins!
+          Catch them and the group wins. Survive 3 rounds and the imposter wins!
         </li>
       </ol>
     </details>

@@ -2,12 +2,15 @@ import { config } from '../config.js';
 import { randomWordPair } from '../game/wordBank.js';
 import { buildTurnOrder } from '../game/gameLogic.js';
 import type {
+  ChatMessage,
   ClueEntry,
   GamePhase,
   Player,
   PublicPlayer,
   WordPair,
 } from './types.js';
+
+const CHAT_HISTORY_LIMIT = 100;
 
 export class Room {
   code: string;
@@ -22,6 +25,7 @@ export class Room {
   clues: ClueEntry[] = [];
   voteInProgress = false;
   votes: Map<string, string> | null = null;
+  chat: ChatMessage[] = [];
   createdAt = Date.now();
   lastActivityAt = Date.now();
 
@@ -31,6 +35,14 @@ export class Room {
 
   touch() {
     this.lastActivityAt = Date.now();
+  }
+
+  addChat(msg: ChatMessage): void {
+    this.chat.push(msg);
+    if (this.chat.length > CHAT_HISTORY_LIMIT) {
+      this.chat.splice(0, this.chat.length - CHAT_HISTORY_LIMIT);
+    }
+    this.touch();
   }
 
   // ---- player management ----
@@ -246,6 +258,7 @@ export class Room {
     this.clues = [];
     this.voteInProgress = false;
     this.votes = null;
+    this.chat = [];
     for (const p of this.players) delete p.word;
     this.touch();
   }

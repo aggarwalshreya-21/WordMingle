@@ -13,13 +13,13 @@ export function ResultsScreen() {
   return (
     <div className="screen results">
       <div className={`result-banner ${groupWon ? 'group' : 'odd'}`}>
-        <h1>{groupWon ? 'Odd One Caught!' : 'The Odd One Escaped!'}</h1>
+        <h1>{groupWon ? 'Imposter Caught!' : 'The Imposter Escaped!'}</h1>
         <p>{groupWon ? 'The group wins 🎉' : `${r.oddPlayerNickname} wins 🕵️`}</p>
       </div>
 
       <div className="reveal">
         <div className="reveal-row">
-          <span className="reveal-label">Odd player</span>
+          <span className="reveal-label">Imposter</span>
           <span className="reveal-value">{r.oddPlayerNickname ?? '—'}</span>
         </div>
         <div className="reveal-row">
@@ -27,7 +27,7 @@ export function ResultsScreen() {
           <span className="reveal-value">{r.mainWord ?? '—'}</span>
         </div>
         <div className="reveal-row odd">
-          <span className="reveal-label">Odd word</span>
+          <span className="reveal-label">Imposter's word</span>
           <span className="reveal-value">{r.oddWord ?? '—'}</span>
         </div>
         <p className="reveal-reason">

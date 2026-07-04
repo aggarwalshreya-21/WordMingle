@@ -26,6 +26,13 @@ export interface ClueEntry {
   round: number;
 }
 
+export interface ChatMessage {
+  playerId: string;
+  nickname: string;
+  text: string;
+  at: number;
+}
+
 export type Winner = 'group' | 'oddPlayer';
 export type EndReason = 'caught' | 'roundsExhausted';
 
