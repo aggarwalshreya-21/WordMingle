@@ -49,7 +49,7 @@ export function ClueScreen() {
       <div className={`word-card ${state.isOdd ? 'imposter' : ''}`}>
         {state.isOdd ? (
           <>
-            <span className="word-label imposter-label">🕵️ You're the odd one</span>
+            <span className="word-label imposter-label">🕵️ You're the imposter</span>
             <span className="word-value">{state.word ?? '—'}</span>
             <span className="word-note">
               Everyone else shares a different word. Bluff, blend in, and don't

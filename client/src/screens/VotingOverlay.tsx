@@ -22,7 +22,7 @@ export function VotingOverlay() {
       <div className="overlay-card">
         {!tally ? (
           <>
-            <h2>Who is the odd one?</h2>
+            <h2>Who is the imposter?</h2>
             {state.voteCalledBy && (
               <p className="subtle">{state.voteCalledBy} called a vote</p>
             )}
@@ -50,7 +50,7 @@ export function VotingOverlay() {
                 <h2>Group accused {tally.accusedNickname}</h2>
                 <p className={tally.wasOddPlayer ? 'good' : 'bad'}>
                   {tally.wasOddPlayer
-                    ? 'Correct — they were the odd one!'
+                    ? 'Correct — they were the imposter!'
                     : 'Wrong! Play continues…'}
                 </p>
               </>

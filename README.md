@@ -1,6 +1,6 @@
 # WordMingle 🎭
 
-> **A real-time, cross-device party game where everyone bluffs to catch the odd one out.** Built with Node.js, Socket.io, React & TypeScript.
+> **A real-time, cross-device party game where everyone bluffs to catch the imposter.** Built with Node.js, Socket.io, React & TypeScript.
 
 A cross-device multiplayer **"odd one out"** party game. Everyone gets a secret
 word from a chosen genre — except one player, the **odd one**, who gets a
@@ -15,10 +15,10 @@ Players join from any device (phone or laptop) using a 4-letter **room code**.
 1. **Create / Join** — the host creates a room and shares the code; others join.
 2. **Lobby** — the host picks a genre (Animals, Movies, Food, Sports, …). Needs
    3–8 players.
-3. **Words** — everyone is privately sent a word. One random player is the odd
-   one and gets a related but different word. **The odd one is told they're the
-   imposter** (but not the real word), so they know to bluff. Nobody else knows
-   who is odd.
+3. **Words** — everyone is privately sent a word. One random player is the
+   **imposter** and gets a related but different word. **The imposter is told
+   they're the imposter** (but not the group's real word), so they know to
+   bluff. Nobody else knows who it is.
 4. **Clues** — in turn order, each player submits one short clue describing their
    word without saying it. Clues appear live for everyone.
    - A built-in **chat** (with emoji picker) and **push-to-talk voice chat**
