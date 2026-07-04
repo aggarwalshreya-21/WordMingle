@@ -16,9 +16,13 @@ Players join from any device (phone or laptop) using a 4-letter **room code**.
 2. **Lobby** — the host picks a genre (Animals, Movies, Food, Sports, …). Needs
    3–8 players.
 3. **Words** — everyone is privately sent a word. One random player is the odd
-   one and gets a related but different word. Nobody is told who is odd.
+   one and gets a related but different word. **The odd one is told they're the
+   imposter** (but not the real word), so they know to bluff. Nobody else knows
+   who is odd.
 4. **Clues** — in turn order, each player submits one short clue describing their
    word without saying it. Clues appear live for everyone.
+   - A built-in **chat** (with emoji picker) and **push-to-talk voice chat**
+     (peer-to-peer WebRTC) let players discuss and accuse in real time.
 5. **Vote** — any player can *Call a Vote* once clues have started. Everyone
    votes; a majority accusation resolves it:
    - Accused **is** the odd one → group wins, game over.
@@ -28,9 +32,18 @@ Players join from any device (phone or laptop) using a 4-letter **room code**.
 
 ## Tech
 - **Backend**: Node.js + Express + Socket.io (in-memory rooms, server-authoritative).
+  Also relays WebRTC signaling (SDP/ICE) for voice chat.
 - **Frontend**: React + Vite + TypeScript (mobile-first, no router — state-driven).
+- **Voice chat**: peer-to-peer WebRTC audio (STUN for NAT traversal); the server
+  only brokers the handshake, audio never passes through it.
 - **One deployable service**: in production the server serves the built client,
   so there's no CORS/config split.
+
+> **Voice-chat note:** browsers only grant microphone access in a *secure
+> context* — i.e. `https://` or `localhost`. On the deployed Render URL (HTTPS)
+> voice works. When testing over your LAN by IP (e.g. `http://192.168.x.x`),
+> the mic is blocked by the browser; text chat and the rest of the game still
+> work there.
 
 ## Local development
 ```bash

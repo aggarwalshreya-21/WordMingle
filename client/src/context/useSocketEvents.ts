@@ -2,7 +2,13 @@ import { useEffect, useRef } from 'react';
 import { socket } from '../socket';
 import { useGame } from './GameContext';
 import { saveSession, clearSession } from '../session';
-import type { ClueEntry, GameResult, PublicPlayer, VoteTally } from '../types';
+import type {
+  ChatMessage,
+  ClueEntry,
+  GameResult,
+  PublicPlayer,
+  VoteTally,
+} from '../types';
 
 /**
  * Wires every server -> client socket event to a reducer dispatch.
@@ -55,8 +61,15 @@ export function useSocketEvents() {
     const onLobby = (p: { players: PublicPlayer[]; genre: string | null }) =>
       dispatch({ type: 'LOBBY_UPDATE', players: p.players, genre: p.genre });
 
-    const onWord = (p: { word: string; genre: string | null }) =>
-      dispatch({ type: 'WORD_ASSIGNED', word: p.word, genre: p.genre });
+    const onWord = (p: { word: string; genre: string | null; isOdd: boolean }) =>
+      dispatch({
+        type: 'WORD_ASSIGNED',
+        word: p.word,
+        genre: p.genre,
+        isOdd: !!p.isOdd,
+      });
+
+    const onChat = (m: ChatMessage) => dispatch({ type: 'CHAT_NEW', message: m });
 
     const onStarted = (p: { round: number }) =>
       dispatch({ type: 'GAME_STARTED', round: p.round });
@@ -98,6 +111,7 @@ export function useSocketEvents() {
     socket.on('game:wordAssigned', onWord);
     socket.on('game:started', onStarted);
     socket.on('clue:new', onClue);
+    socket.on('chat:new', onChat);
     socket.on('turn:update', onTurn);
     socket.on('round:new', onRound);
     socket.on('vote:started', onVoteStarted);
@@ -119,6 +133,7 @@ export function useSocketEvents() {
       socket.off('game:wordAssigned', onWord);
       socket.off('game:started', onStarted);
       socket.off('clue:new', onClue);
+      socket.off('chat:new', onChat);
       socket.off('turn:update', onTurn);
       socket.off('round:new', onRound);
       socket.off('vote:started', onVoteStarted);
@@ -141,8 +156,10 @@ function snapshotDispatch(
     round: number;
     currentPlayerId: string | null;
     clues: ClueEntry[];
+    chat: ChatMessage[];
     voteInProgress: boolean;
     word: string | null;
+    isOdd: boolean;
     result: {
       oddPlayerId: string | null;
       oddPlayerNickname: string | null;

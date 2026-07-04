@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from 'react';
 import type {
+  ChatMessage,
   ClueEntry,
   GamePhase,
   GameResult,
@@ -21,9 +22,11 @@ export interface GameState {
   players: PublicPlayer[];
   genre: string | null;
   word: string | null;
+  isOdd: boolean;
   round: number;
   currentPlayerId: string | null;
   clues: ClueEntry[];
+  chat: ChatMessage[];
   voteInProgress: boolean;
   voteCalledBy: string | null;
   voteProgress: { voted: number; total: number };
@@ -40,9 +43,11 @@ export const initialState: GameState = {
   players: [],
   genre: null,
   word: null,
+  isOdd: false,
   round: 1,
   currentPlayerId: null,
   clues: [],
+  chat: [],
   voteInProgress: false,
   voteCalledBy: null,
   voteProgress: { voted: 0, total: 0 },
@@ -55,9 +60,10 @@ export type Action =
   | { type: 'CONNECTED'; connected: boolean }
   | { type: 'ROOM_JOINED'; roomCode: string; playerId: string }
   | { type: 'LOBBY_UPDATE'; players: PublicPlayer[]; genre: string | null }
-  | { type: 'WORD_ASSIGNED'; word: string; genre: string | null }
+  | { type: 'WORD_ASSIGNED'; word: string; genre: string | null; isOdd: boolean }
   | { type: 'GAME_STARTED'; round: number }
   | { type: 'CLUE_NEW'; clue: ClueEntry }
+  | { type: 'CHAT_NEW'; message: ChatMessage }
   | { type: 'TURN_UPDATE'; currentPlayerId: string | null; round: number }
   | { type: 'ROUND_NEW'; round: number }
   | { type: 'VOTE_STARTED'; calledBy: string; total: number }
@@ -78,8 +84,10 @@ export interface SnapshotPayload {
   round: number;
   currentPlayerId: string | null;
   clues: ClueEntry[];
+  chat: ChatMessage[];
   voteInProgress: boolean;
   word: string | null;
+  isOdd: boolean;
   result: {
     oddPlayerId: string | null;
     oddPlayerNickname: string | null;
@@ -106,7 +114,12 @@ export function reducer(state: GameState, action: Action): GameState {
       return { ...state, players: action.players, genre: action.genre };
 
     case 'WORD_ASSIGNED':
-      return { ...state, word: action.word, genre: action.genre ?? state.genre };
+      return {
+        ...state,
+        word: action.word,
+        isOdd: action.isOdd,
+        genre: action.genre ?? state.genre,
+      };
 
     case 'GAME_STARTED':
       return {
@@ -120,6 +133,9 @@ export function reducer(state: GameState, action: Action): GameState {
 
     case 'CLUE_NEW':
       return { ...state, clues: [...state.clues, action.clue] };
+
+    case 'CHAT_NEW':
+      return { ...state, chat: [...state.chat, action.message] };
 
     case 'TURN_UPDATE':
       return {
@@ -163,9 +179,11 @@ export function reducer(state: GameState, action: Action): GameState {
         ...state,
         phase: 'lobby',
         word: null,
+        isOdd: false,
         round: 1,
         currentPlayerId: null,
         clues: [],
+        chat: [],
         voteInProgress: false,
         voteCalledBy: null,
         voteTally: null,
@@ -182,8 +200,10 @@ export function reducer(state: GameState, action: Action): GameState {
         round: p.round,
         currentPlayerId: p.currentPlayerId,
         clues: p.clues,
+        chat: p.chat,
         voteInProgress: p.voteInProgress,
         word: p.word,
+        isOdd: p.isOdd,
         result: p.result
           ? {
               ...p.result,

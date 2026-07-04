@@ -12,6 +12,7 @@ export const actions = {
   selectGenre: (genre: string) => socket.emit('lobby:selectGenre', { genre }),
   startGame: () => socket.emit('lobby:startGame'),
   submitClue: (clue: string) => socket.emit('clue:submit', { clue }),
+  sendChat: (text: string) => socket.emit('chat:send', { text }),
   callVote: () => socket.emit('vote:call'),
   castVote: (accusedPlayerId: string) =>
     socket.emit('vote:cast', { accusedPlayerId }),
