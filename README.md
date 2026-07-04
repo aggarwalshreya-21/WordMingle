@@ -1,5 +1,7 @@
 # WordMingle 🎭
 
+> **A real-time, cross-device party game where everyone bluffs to catch the odd one out.** Built with Node.js, Socket.io, React & TypeScript.
+
 A cross-device multiplayer **"odd one out"** party game. Everyone gets a secret
 word from a chosen genre — except one player, the **odd one**, who gets a
 different but related word. Over up to 3 rounds each player gives a one-word
