@@ -7,6 +7,8 @@ export const actions = {
   createRoom: (nickname: string) => socket.emit('room:create', { nickname }),
   joinRoom: (roomCode: string, nickname: string) =>
     socket.emit('room:join', { roomCode: roomCode.toUpperCase(), nickname }),
+  rejoin: (roomCode: string, playerId: string) =>
+    socket.emit('room:rejoin', { roomCode, playerId }),
   selectGenre: (genre: string) => socket.emit('lobby:selectGenre', { genre }),
   startGame: () => socket.emit('lobby:startGame'),
   submitClue: (clue: string) => socket.emit('clue:submit', { clue }),

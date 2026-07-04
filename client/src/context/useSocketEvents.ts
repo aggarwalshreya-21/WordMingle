@@ -1,30 +1,40 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { socket } from '../socket';
 import { useGame } from './GameContext';
-import {
-  loadSession,
-  saveSession,
-  clearSession,
-} from '../session';
+import { saveSession, clearSession } from '../session';
 import type { ClueEntry, GameResult, PublicPlayer, VoteTally } from '../types';
 
 /**
  * Wires every server -> client socket event to a reducer dispatch.
- * Mounted once at the App root. Also handles reconnect via saved session.
+ * Mounted once at the App root.
+ *
+ * Reconnect policy: we ONLY auto-rejoin when the socket drops *during* an
+ * active session (i.e. React state still holds our room). On a fresh page
+ * load, React state starts at the landing menu, so we never silently jump
+ * into an old game — the user gets to choose Create/Join (and can rejoin
+ * their last room via an explicit button on the landing screen).
  */
 export function useSocketEvents() {
-  const { dispatch } = useGame();
+  const { state, dispatch } = useGame();
+
+  // Mirror the current room into a ref so the (once-mounted) socket handlers
+  // can read the latest value without re-subscribing.
+  const roomRef = useRef<{ roomCode: string | null; playerId: string | null }>({
+    roomCode: null,
+    playerId: null,
+  });
+  useEffect(() => {
+    roomRef.current = { roomCode: state.roomCode, playerId: state.playerId };
+  }, [state.roomCode, state.playerId]);
 
   useEffect(() => {
     const onConnect = () => {
       dispatch({ type: 'CONNECTED', connected: true });
-      // Attempt to rejoin a room we were previously in.
-      const saved = loadSession();
-      if (saved) {
-        socket.emit('room:rejoin', {
-          roomCode: saved.roomCode,
-          playerId: saved.playerId,
-        });
+      // Transient reconnect: we were already in a room this session, so
+      // silently re-establish the server-side association.
+      const { roomCode, playerId } = roomRef.current;
+      if (roomCode && playerId) {
+        socket.emit('room:rejoin', { roomCode, playerId });
       }
     };
     const onDisconnect = () => dispatch({ type: 'CONNECTED', connected: false });

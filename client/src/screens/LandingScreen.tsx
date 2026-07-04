@@ -1,15 +1,24 @@
 import { useState } from 'react';
 import { actions } from '../actions';
 import { useGame } from '../context/GameContext';
+import { loadSession, clearSession } from '../session';
 
 export function LandingScreen() {
   const { state } = useGame();
   const [mode, setMode] = useState<'menu' | 'create' | 'join'>('menu');
   const [nickname, setNickname] = useState('');
   const [roomCode, setRoomCode] = useState('');
+  // A recent, still-fresh session lets the player hop back into their game
+  // after a refresh — shown as an explicit choice, never an auto-jump.
+  const [resumable, setResumable] = useState(() => loadSession());
 
   const canCreate = nickname.trim().length > 0;
   const canJoin = canCreate && roomCode.trim().length >= 4;
+
+  const dismissResume = () => {
+    clearSession();
+    setResumable(null);
+  };
 
   return (
     <div className="screen landing">
@@ -24,6 +33,27 @@ export function LandingScreen() {
 
       {mode === 'menu' && (
         <div className="stack">
+          {resumable && (
+            <div className="resume-card">
+              <span>
+                Rejoin your game in room <b>{resumable.roomCode}</b>?
+              </span>
+              <div className="resume-actions">
+                <button
+                  className="btn primary"
+                  disabled={!state.connected}
+                  onClick={() =>
+                    actions.rejoin(resumable.roomCode, resumable.playerId)
+                  }
+                >
+                  Rejoin
+                </button>
+                <button className="btn ghost" onClick={dismissResume}>
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          )}
           <button className="btn primary" onClick={() => setMode('create')}>
             Create Room
           </button>
