@@ -14,6 +14,10 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: { origin: config.CLIENT_ORIGIN },
+  // Tolerate brief mobile/tab-background stalls before declaring a socket
+  // dead — prevents players being marked "disconnected" over short hiccups.
+  pingInterval: 25_000,
+  pingTimeout: 60_000,
 });
 
 // Lightweight health + genre list endpoints (handy for the client + hosts).

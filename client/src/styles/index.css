@@ -168,6 +168,23 @@ input:focus {
   color: var(--muted);
   margin-top: -4px;
 }
+.resume-card {
+  background: var(--card-2);
+  border: 1px solid var(--accent-strong);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: center;
+}
+.resume-actions {
+  display: flex;
+  gap: 10px;
+}
+.resume-actions .btn {
+  flex: 1;
+}
 .how-to {
   margin-top: 8px;
   background: var(--card);
